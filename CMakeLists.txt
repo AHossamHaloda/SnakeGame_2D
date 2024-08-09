@@ -16,7 +16,8 @@ endif()
 
 # Add executable and source files
 add_executable(SnakeGame
-    src/main.cpp
+    main.cpp
+    src/gameManager.cpp
     src/game.cpp
     src/controller.cpp
     src/renderer.cpp
