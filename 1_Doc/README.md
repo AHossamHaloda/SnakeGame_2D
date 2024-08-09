@@ -63,19 +63,21 @@ Max number of top scores is configurable through **Max_NUMBER_PLAYERS** in `game
 
 **New Design:**
 
+- **Code Restructure**: The code has been restructured for better organization by separating source files from header files and moving `main.cpp` to the parent directory for improved project organization.
+  
 - **GameManager Class**: Introduced a new class, `GameManager`, which centralizes all project control. The Game Super Loop now runs in the `GameManager`, which interacts with all game objects. This design allows each object to focus on a single task, minimizing dependencies between objects. The `Snake` object is shared among all game objects using a `std::shared_ptr`, achieving dependency injection to reduce coupling, enhance design flexibility, and improve memory management.
 
 - **Dependency Injection**: Utilized the `Snake` object via a shared pointer in the `GameManager` class, passing it to other game objects. This approach reduces coupling and enhances flexibility in design changes.
 
 - **State Machine Integration**: Integrated a state machine in the Game Super Loop using two enums to represent the game menu options and the current game state.
 
-- **Configurable Game Settings**: All game settings are configured through preprocessor macros in configurable files and assigned to `const` variables at compile/run time.
+- **Configurable Game Settings**: All game settings are configured through preprocessor macros in configurable files `gameManagerCfg.h` and `gameDataBaseCfg.h` and assigned to `const` variables at compile/run time.
 
 **New Features**
 
 - **Menu Options**: Added a menu that allows players to start a new game, view top players, or quit the game.
 
-- **GameDataBase Class**: Introduced a new class, `GameDataBase`, to manage storing player scores and names in an external file.
+- **GameDataBase Class**: Introduced a new class, `GameDataBase`, to manage storing player scores and names in an external file `GameTopscore.txt`.
 
 - **Pause/Resume Functionality**: Implemented a new feature using the `Esc` key to allow players to pause and resume the game.
 
