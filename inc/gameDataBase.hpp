@@ -30,6 +30,7 @@ public:
     // Load scores from the file
     void vidDisplayTopPlayers() const;
 
+    // A struct represent the Player info
     struct Player{
         std::string strName;
         unsigned int u64Score;
