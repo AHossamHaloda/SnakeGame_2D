@@ -18,6 +18,7 @@ endif()
 add_executable(SnakeGame
     main.cpp
     src/gameManager.cpp
+    src/gameDataBase.cpp
     src/game.cpp
     src/controller.cpp
     src/renderer.cpp

@@ -4,19 +4,24 @@
 #include <vector>
 #include "SDL.h"
 #include "snake.h"
+#include "gameState.hpp"
 
 class Renderer {
  public:
-  Renderer(const std::size_t screen_width, const std::size_t screen_height,
+  Renderer(std::shared_ptr<Snake> snake, const std::size_t screen_width, const std::size_t screen_height,
            const std::size_t grid_width, const std::size_t grid_height);
   ~Renderer();
 
-  void Render(Snake const snake, SDL_Point const &food);
+  void Render(SDL_Point const &food, GameState const &gameState);
   void UpdateWindowTitle(int score, int fps);
 
  private:
-  SDL_Window *sdl_window;
-  SDL_Renderer *sdl_renderer;
+  // shared pointer of Type Snake to hold snake obj
+  std::shared_ptr<Snake> m_snakeObj;
+
+  // Game Window
+  SDL_Window *sdlGameWindow;
+  SDL_Renderer *sdlGameRenderer;
 
   const std::size_t screen_width;
   const std::size_t screen_height;

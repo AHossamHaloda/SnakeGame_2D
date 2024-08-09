@@ -6,17 +6,20 @@
 
 class Snake {
  public:
+
+   // Private constructor definition
+   Snake(int grid_width, int grid_height)
+     : grid_width(grid_width),
+       grid_height(grid_height),
+       head_x(grid_width / 2),
+       head_y(grid_height / 2) {}
+  
+  // Enum Class Represent Snake Move Directions 
   enum class Direction { kUp, kDown, kLeft, kRight };
 
-  Snake(int grid_width, int grid_height)
-      : grid_width(grid_width),
-        grid_height(grid_height),
-        head_x(grid_width / 2),
-        head_y(grid_height / 2) {}
-
   void Update();
-
   void GrowBody();
+
   bool SnakeCell(int x, int y);
 
   Direction direction = Direction::kUp;
@@ -29,12 +32,17 @@ class Snake {
   std::vector<SDL_Point> body;
 
  private:
+
+  std::shared_ptr<Snake> m_SnakeObj;
+
   void UpdateHead();
+
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
 
   bool growing{false};
   int grid_width;
   int grid_height;
+
 };
 
 #endif

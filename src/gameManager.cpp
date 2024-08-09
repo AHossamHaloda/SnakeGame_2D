@@ -11,10 +11,12 @@
 // GameManager Constructor
 /*************************************************************************************/
 GameManager::GameManager() 
-: m_snakeObj(std::make_shared<Snake>(m_u16GridWidth, m_u16GridHeight)),
-  m_controllerObj(),
-  m_gameObj(Game(m_u16GridWidth, m_u16GridHeight)),
-  m_renderObj(Renderer(m_u16ScreenWidth, m_u16ScreenHeight, m_u16GridWidth, m_u16GridHeight))
+: m_enuGameState(GameState::Undefined),
+  m_gameDataBaseObj(),
+  m_snakeObj(std::make_shared<Snake>(m_u16GridWidth, m_u16GridHeight)),
+  m_controllerObj (Controller(m_snakeObj)),
+  m_gameObj(Game(m_snakeObj, m_u16GridWidth, m_u16GridHeight)),
+  m_renderObj(Renderer(m_snakeObj, m_u16ScreenWidth, m_u16ScreenHeight, m_u16GridWidth, m_u16GridHeight))
 {
     std::cout<<"GameManager Constructor\n";
 }
@@ -91,13 +93,85 @@ void GameManager::gameMainFunction()
     quitGame();
     break;
   }
+
+
+  while (m_enuGameState != GameState::Quit) 
+  {
+
+    if (m_enuGameState == GameState::Run)
+    {
+      // Capture Current time - Start of Frame/Loop 
+      frame_start = SDL_GetTicks();
+
+      /* Lunch Threads: Input, Update, Render - the main game loop. */
+      // std::thread inputThread([this]() { gameHandleInput(); });
+      // Join threads to wait for their completion
+      // inputThread.join();
+
+      // Handle Input 
+      m_controllerObj.HandleInput(m_enuGameState);
+
+      // Update Game 
+      m_gameObj.Update();
+      
+      // Render Game 
+      m_renderObj.Render(m_gameObj.GetFood(), m_enuGameState);
+
+      // Capture Current time - End of Frame/Loop 
+      frame_end = SDL_GetTicks();
+      frame_duration = frame_end - frame_start;
+      // Keep track of how long each loop through the input/update/render cycle
+      frame_count++;
+
+      //TESTING
+      // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      // std::cout<<"title_timestamp = "<<title_timestamp<<"   FStart = "<<frame_start<<"   FEnd = "<<frame_end<<"\n\n";
+      // if (frame_end <= frame_start)
+      // {
+      //   std::cout<<"title_timestamp = "<<title_timestamp<<"   FStart = "<<frame_start<<"   FEnd = "<<frame_end<<"\n\n";
+      // }
+
+      // After every second, update the window title.
+      if (frame_end - title_timestamp >= 1000) 
+      {
+        // m_ptrRender->UpdateWindowTitle(m_ptrGame->GetScore(), frame_count);
+        m_renderObj.UpdateWindowTitle(m_gameObj.GetScore(), frame_count);
+        
+        frame_count = 0;
+        title_timestamp = frame_end;
+      }
+
+      // If the time for this frame is too small (i.e. frame_duration is
+      // smaller than the target ms_per_frame), delay the loop to
+      // achieve the correct frame rate.
+      if (frame_duration < m_u16MsPerFrame) 
+      {
+        SDL_Delay(m_u16MsPerFrame - frame_duration);
+      }
+      else
+      {
+        // return;
+      }
+    }
+    else if(m_enuGameState == GameState::Pause)
+    {
+
+      m_controllerObj.HandleInput(m_enuGameState);
+    }
+  }
+  
+  /* Input, Update, Render - the main game loop. */
 }
 
 
 /*************************************************************************************/
 void GameManager::startNewGame()
 { 
-  m_gameObj.Run(m_controllerObj, m_renderObj, m_u16MsPerFrame);
+  std::string playerName;
+  std::cout<<"Please Eneter Your Name\n\n";
+  std::cin>>playerName;
+  m_gameDataBaseObj.vidSetPlayerName(playerName);
+  m_enuGameState = GameState::Run;
 }
 
 /*************************************************************************************/
@@ -108,4 +182,12 @@ void GameManager::displayTopScore()
 /*************************************************************************************/
 void GameManager::quitGame()
 {
+  m_enuGameState = GameState::Quit;
 }
+
+    
+/*************************************************************************************/
+// void GameManager::gameHandleInput()
+// {
+//   m_controllerObj.HandleInput(m_bRunning);
+// }

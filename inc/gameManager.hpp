@@ -7,10 +7,12 @@
 #include <vector>
 
 #include "gameManagerCfg.h"
+#include "gameDataBase.hpp"
 #include "snake.h"
 #include "controller.h"
 #include "game.h"
 #include "renderer.h"
+#include "gameState.hpp"
 
 class GameManager {
 
@@ -53,6 +55,7 @@ void quitGame();
 
 
 private:
+GameDataBase m_gameDataBaseObj;
 std::shared_ptr<Snake> m_snakeObj;
 Controller m_controllerObj;
 Game m_gameObj;
@@ -60,6 +63,8 @@ Renderer m_renderObj;
 
 GameMenuOption m_enuGameMenuOption; // Represent Game Menu Options
 
+/* Game Status */
+GameState m_enuGameState;
 
 /* Game Settings Parameters */
 static constexpr uint16_t m_u16FramesPerSecond{GAME_FPS};
