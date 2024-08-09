@@ -86,6 +86,135 @@ Max number of top scores is configurable through **Max_NUMBER_PLAYERS** in `game
 
 ---
 
+## Project Rubric Points
+
+### <u>Section 1:</u> README
+#### Point 1
+Check **Project Dependencies** section in the current file.
+#### Point 2
+Check **Project New Features** section in the current file.
+#### Point 3
+Check **Project Rubric Points** section in the current file.
+
+================================================
+
+### <u>Section 2:</u> Compiling and Testing
+#### Point 1
+The Project use **cmake** and **make** as build systems.
+
+================================================
+
+### <u>Section 3:</u> Loops, Functions, I/O
+#### Point 1
+Check the **GameManager Class** which has the main interfaces for the Game:
+- `void gameInit()` // Game Init
+- `void gameMainFunction()` // Game Main 
+- // Enum Class Represent Game Menu Options 
+```
+enum class GameMenuOption
+{
+    Undefined = 0,
+    StartNewGame,
+    CheckTopScores,
+    QuitGame,
+    MenuOptionCount
+}
+```
+
+Check the **GameDataBase Class** which has the main interfaces for handling Game Record:
+- `void vidSetPlayerName(std::string name)` // Set Player Name
+- `void vidSetPlayerScore(int score)` // Set Player Score
+- `std::string strGetPlayerName()` // Get player Name
+- `unsigned int u64GetPlayerScore()` // Get player Score
+- `void vidSavePlayer()` // Add a new score
+- `void vidDisplayTopPlayers() const` // Load scores from the file
+- // A struct represent the Player info
+
+```
+struct Player
+{
+      std::string strName;
+      unsigned int u64Score;
+      bool IsUpdated = true; 
+}
+```
+Check **gameState.hpp** which has the enum class that represent the game states
+```
+enum class GameState {
+    Undefined = 0,
+    Run,
+    Pause,
+    End,
+    Quit,
+    GameStateCount
+}
+```
+Check **Snake Class**, **Game Class** and **Renderer Class** which has a new Interface to reset the game parameters
+`void Reset()` 
+
+#### Point 2
+Check `void SaveScores() const` and `void vidDisplayTopPlayers() const` in the **GameData Base Class** which are used to save(write) socre in an external file and dispay (read) from it to the user.
+
+#### Point 3
+Check `void startGameMenu()` in **GameManager class** that enable the player to select from a menu options.
+
+#### Point 4
+Check **gameManager.hpp** file line 75 to line 81 which as constexpr member variables to hold game settings parameters.
+Check **gameDataBase.hpp** file line 41 which has const member variable to hold the path of the external file.
+Check **gameDataBase.cpp** file `vidDisplayTopPlayers()` line 38 which has a locl vector of pairs to store the readed data from the file.
+Check **gameDataBase.cpp** file `SaveScores()` line 92 which has a locl vector of pairs to store the content of the map for further processing (sorting).
+Check **gameDataBase.cpp** file `SortAndTrimScores()` line 116 which has a locl vector of pairs to store the content of the map for further processing (sorting/trimming).
+
+================================================
+
+### <u>Section 4:</u> Object Oriented Programming
+#### Point 1
+Check the new classes **GameManager class** and **GameDataBase class**.
+
+#### Point 2
+Check **gameDataBase.hpp** file line 13
+Check **snake.h** file line 13
+Check **controller.h** file line 13
+Check **game.cpp** file line 9
+Check **renderer.cpp** file line 11
+
+#### Point 3
+All Class members have description comments.
+
+#### Point 4
+NOT Done - No function overloading is needed in the current design.
+
+#### Point 5
+Not Done - No inhertiance is needed in the current design.
+
+#### Point 6
+Not Done - No Template is needed in the current design.
+
+================================================
+
+### <u>Section 5:</u> Memory Management
+#### Point 1
+Check **controller.h** file line 22
+Check **game.h** file line 22
+Check **render.h** file line 19
+Check **snake.h** file line 19
+
+#### Point 2
+Check **render.cpp** file line 43
+
+#### Point 3
+Check gamerManager.cpp file line 17, the usage of sharedPointer which achieves RAII.
+
+#### Point 4
+Not Done.
+
+#### Point 5
+Not Done.
+
+#### Point 6
+Not Done.
+
+---
 
 ## CC Attribution-ShareAlike 4.0 International
 
