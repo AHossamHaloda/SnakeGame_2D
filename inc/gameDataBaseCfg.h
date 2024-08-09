@@ -2,7 +2,7 @@
 #define GAME_DATA_BASE_CFG_H
 
 /* File path */
-#define FILE_TOP_SCORES     "GameRecord.txt/GameTopscore.txt"
+#define FILE_TOP_SCORES     "../GameRecord/GameTopscore.txt"
 
 /**  
  * Configurable:

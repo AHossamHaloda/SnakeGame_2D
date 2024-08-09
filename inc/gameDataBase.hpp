@@ -9,7 +9,8 @@
 
 class GameDataBase {
 public:
-    GameDataBase(){}
+    GameDataBase()
+    :   m_player{"", 0, false} {}
     
     // Set Player Name
     void vidSetPlayerName(std::string name);
@@ -24,20 +25,15 @@ public:
     unsigned int u64GetPlayerScore();
 
     // Add a new score
-    void AddScore(const std::string& name, int score);
+    void vidSavePlayer();
 
     // Load scores from the file
-    void LoadScores();
-
-    // Save scores to the file
-    void SaveScores() const;
-
-    // Display top scores
-    void DisplayScores() const;
+    void vidDisplayTopPlayers() const;
 
     struct Player{
-        std::string name;
-        unsigned int score;
+        std::string strName;
+        unsigned int u64Score;
+        bool IsUpdated = true; 
     };
 
 private:
@@ -47,7 +43,11 @@ private:
 
     Player m_player; 
     
+    // Sort the map and limit it to max. number of players to be stored
     void SortAndTrimScores();
+
+    // Save scores to the file
+    void SaveScores() const;
 
 };
 

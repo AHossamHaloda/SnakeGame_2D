@@ -44,6 +44,7 @@ Renderer::~Renderer() {
   SDL_DestroyRenderer(sdlGameRenderer);
   SDL_DestroyWindow(sdlGameWindow);
   SDL_Quit();
+  // std::cout<<"Renderer Destructor\n";
 }
 
 // Render Window
@@ -87,13 +88,25 @@ void Renderer::Render(SDL_Point const &food, GameState const &gameState) {
     // Update the game screen to reflect the new rendering
     SDL_RenderPresent(sdlGameRenderer);  
   }
-  else if (gameState == GameState::Pause) 
+  else
   {
-
+    /*
+    * No Action is Required
+    */
   }
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
+/*************************************************************************************/
+void Renderer::UpdateWindowTitle(int score, int fps) 
+{
   std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdlGameWindow, title.c_str());
+}
+
+/*************************************************************************************/
+void Renderer::Reset()
+{
+  // Clear game screen
+  SDL_SetRenderDrawColor(sdlGameRenderer, 0x1E, 0x1E, 0x1E, 0xFF);
+  SDL_RenderClear(sdlGameRenderer);
 }

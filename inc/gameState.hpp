@@ -5,6 +5,7 @@ enum class GameState {
     Undefined = 0,
     Run,
     Pause,
+    End,
     Quit,
     GameStateCount
 };

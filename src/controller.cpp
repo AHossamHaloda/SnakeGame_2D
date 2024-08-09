@@ -3,12 +3,16 @@
 #include "SDL.h"
 #include "snake.h"
 
+// Change Snake Direction
+/*************************************************************************************/
 void Controller::ChangeDirection(Snake::Direction input,
                                  Snake::Direction opposite) const {
   if (m_snakeObj->direction != opposite || m_snakeObj->size == 1) m_snakeObj->direction = input;
   return;
 }
 
+// Handle Player Input
+/*************************************************************************************/
 void Controller::HandleInput(GameState& gameState) const 
 {
   SDL_Event e;
@@ -21,7 +25,7 @@ void Controller::HandleInput(GameState& gameState) const
     } 
     else
     {
-      if ((gameState == GameState::Run) && (e.type == SDL_KEYDOWN))
+      if (e.type == SDL_KEYDOWN)
       {
         switch (e.key.keysym.sym) 
         {
@@ -59,32 +63,11 @@ void Controller::HandleInput(GameState& gameState) const
             break;
         }
       }
-      else if ((gameState == GameState::Pause) && (e.type == SDL_KEYDOWN))
+      else
       {
-        // at this point the hidden menu option should appear with an identifer(cursuer for example on the current option Resume, TopScores, Quit)
-        switch (e.key.keysym.sym) 
-        {
-          case SDLK_UP:
-          // should move the identifer up(if the identifer on the first option then it should point to the last)
-            break;
-
-          case SDLK_DOWN:
-          // should move the identifer down(if the identifer on the last option then it should point to the first)
-            break;
-
-          case SDLK_ESCAPE:
-            if (bMenuToggle == true)
-            {
-              gameState = GameState::Pause;
-              bMenuToggle = false;
-            }
-            else        
-            {
-              gameState = GameState::Run;
-              bMenuToggle = true;
-            }
-            break;
-        }
+        /*
+        * No Action is required
+        */
       }
     }
   }

@@ -2,11 +2,12 @@
 #include <cmath>
 #include <iostream>
 
+// Update Snake Location in the Grid
+/*************************************************************************************/
 void Snake::Update() {
   SDL_Point prev_cell{
       static_cast<int>(head_x),
-      static_cast<int>(
-          head_y)};  // We first capture the head's cell before updating.
+      static_cast<int>(head_y)};  // We first capture the head's cell before updating.
   UpdateHead();
   SDL_Point current_cell{
       static_cast<int>(head_x),
@@ -19,6 +20,8 @@ void Snake::Update() {
   }
 }
 
+// Update Snake Head Location in the Grid
+/*************************************************************************************/
 void Snake::UpdateHead() {
   switch (direction) {
     case Direction::kUp:
@@ -43,6 +46,8 @@ void Snake::UpdateHead() {
   head_y = fmod(head_y + grid_height, grid_height);
 }
 
+// Update Snake Location in the Grid
+/*************************************************************************************/
 void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {
   // Add previous head location to vector
   body.push_back(prev_head_cell);
@@ -63,9 +68,12 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   }
 }
 
+// Update Snake Growing State
+/*************************************************************************************/
 void Snake::GrowBody() { growing = true; }
 
 // Inefficient method to check if cell is occupied by snake.
+/*************************************************************************************/
 bool Snake::SnakeCell(int x, int y) {
   if (x == static_cast<int>(head_x) && y == static_cast<int>(head_y)) {
     return true;
@@ -76,4 +84,17 @@ bool Snake::SnakeCell(int x, int y) {
     }
   }
   return false;
+}
+
+// Reset Snake Parameters
+/*************************************************************************************/
+void Snake::Reset()
+{
+  head_x = grid_width / 2;
+  head_y = grid_height / 2;
+  body.clear();
+  growing = false;
+  speed = 0.1f;
+  size = 1;
+  alive = true;
 }

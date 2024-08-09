@@ -9,15 +9,31 @@
 
 class Game {
  public:
+  
+  // Game Constructor
   Game(std::shared_ptr<Snake> snake, std::size_t grid_width, std::size_t grid_height);
 
-  void Update();
+  // Game Destructor
+  ~Game()
+  {
+    // std::cout<<"Game Destructor\n";
+  }
+
+  void Update(GameState &gameState);
+
+  void Reset();
+
   int GetScore() const;
+  
   int GetSize() const;
+  
   SDL_Point GetFood() const;
 
  private:
   std::shared_ptr<Snake> m_snakeObj;
+  std::size_t m_grid_width;
+  std::size_t m_grid_height;
+
   
   SDL_Point m_foodObj;
 

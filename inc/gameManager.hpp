@@ -29,7 +29,7 @@ GameManager();
 // Enum Class Represent Game Menu Options 
 enum class GameMenuOption
 {
-    NotSelected = 0,  // Default state when no option is selected
+    Undefined = 0,  // Default state when no option is selected
     StartNewGame,
     CheckTopScores,
     QuitGame,
@@ -42,29 +42,35 @@ void gameInit();
 // Game Main 
 void gameMainFunction();
 
-
 private:
 
 void startGameMenu();
 
 void startNewGame();
 
-void displayTopScore();
-
 void quitGame();
+
+void resetGame();
+
+void vidDisplayTopScores();
+
+void displayScore();
+
+void updateDataBase();
 
 
 private:
+
+/* Game Objects */
 GameDataBase m_gameDataBaseObj;
 std::shared_ptr<Snake> m_snakeObj;
 Controller m_controllerObj;
 Game m_gameObj;
 Renderer m_renderObj;
 
-GameMenuOption m_enuGameMenuOption; // Represent Game Menu Options
-
 /* Game Status */
 GameState m_enuGameState;
+GameMenuOption m_enuGameMenuOption; // Represent Game Menu Options
 
 /* Game Settings Parameters */
 static constexpr uint16_t m_u16FramesPerSecond{GAME_FPS};

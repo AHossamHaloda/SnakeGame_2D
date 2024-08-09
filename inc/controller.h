@@ -1,9 +1,10 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "snake.h"
+#include <iostream>
 #include <memory>
 #include "gameState.hpp"
+#include "snake.h"
 
 class Controller {
  public:
@@ -11,6 +12,11 @@ class Controller {
  Controller(std::shared_ptr<Snake> snake)
  : m_snakeObj(snake){
 
+ }
+ // Controller Destructor
+ ~Controller()
+ {
+   //  std::cout<<"Controller Destructor\n";
  }
 
   void HandleInput(GameState& gameState) const;
