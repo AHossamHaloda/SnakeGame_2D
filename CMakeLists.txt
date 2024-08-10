@@ -25,14 +25,16 @@ add_executable(SnakeGame
     src/snake.cpp
 )
 
-# Include directories and link SDL2 and SDL2_ttf libraries
+# Include directories and link SDL2 libraries
 target_include_directories(SnakeGame PRIVATE
     ${SDL2_INCLUDE_DIRS}
     inc
 )
 
+# Link SDL2, and pthread libraries
 target_link_libraries(SnakeGame PRIVATE
     ${SDL2_LIBRARIES}
+    pthread
 )
 
 # Optional: Use target_compile_options to add compiler flags
