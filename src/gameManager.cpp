@@ -3,23 +3,33 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include <thread>
 #include "gameManager.hpp"
-
 
 
 // GameManager Constructor
 /*************************************************************************************/
 GameManager::GameManager() 
-: m_enuGameState(GameState::Undefined),
-  m_enuGameMenuOption(GameMenuOption::Undefined),
-  m_gameDataBaseObj(),
+: m_gameDataBaseObj(),
   m_snakeObj(std::make_shared<Snake>(m_u16GridWidth, m_u16GridHeight)),
   m_controllerObj (Controller(m_snakeObj)),
   m_gameObj(Game(m_snakeObj, m_u16GridWidth, m_u16GridHeight)),
-  m_renderObj(Renderer(m_snakeObj, m_u16ScreenWidth, m_u16ScreenHeight, m_u16GridWidth, m_u16GridHeight))
+  m_renderObj(Renderer(m_snakeObj, m_u16ScreenWidth, m_u16ScreenHeight, m_u16GridWidth, m_u16GridHeight)),
+  m_enuGameState(GameState::Undefined),
+  m_enuGameMenuOption(GameMenuOption::Undefined),
+  m_strPlayerName(""),
+  m_u64PlayerScore(0)
 {
     std::cout<<"GameManager Constructor\n";
+}
+
+// GameManager Destructor
+/*************************************************************************************/
+GameManager::~GameManager(){
+  if (m_threadDataBase.joinable()) 
+  {
+    m_threadDataBase.join();
+  }
+  std::cout<<"GameManager Destructor\n";
 }
 
 // Game Manager Init
@@ -29,50 +39,53 @@ void GameManager::gameInit()
   std::cout<<"~~~~~ Welcome to Snake_2D game ~~~~~\n";
   /* Start Game Menu */
   startGameMenu();
+
+  /* Launch Data Base Thread */
+  m_threadDataBase = std::thread(&GameManager::threadUpdateDataBase, this);
 }
 
 // Lunch Game Menu
 /*************************************************************************************/
 void GameManager::startGameMenu()
 {
-    uint16_t key_pressed;
+  uint16_t key_pressed;
 
-    std::cout << " 1. Start New Game\n";
-    std::cout << " 2. Check Top Scores\n";
-    std::cout << " 3. QUIT\n";
+  std::cout << " 1. Start New Game\n";
+  std::cout << " 2. Check Top Scores\n";
+  std::cout << " 3. QUIT\n";
 
-    while ( (!(std::cin >> key_pressed)) || (key_pressed < 1) || (key_pressed > 3) )
-    {
-      // clear the error state of std::cin if exist
-      std::cin.clear();
-      
-      // Discard the remaning characters in the input buffer if exist
-      std::cin.ignore();
+  while ( (!(std::cin >> key_pressed)) || (key_pressed < 1) || (key_pressed > 3) )
+  {
+    // clear the error state of std::cin if exist
+    std::cin.clear();
+    
+    // Discard the remaning characters in the input buffer if exist
+    std::cin.ignore();
 
-      // Ask user to try again:
-      std::cout << "INVALID Choice. Please Try Again !\n\n";
-    }
+    // Ask user to try again:
+    std::cout << "INVALID Choice. Please Try Again !\n\n";
+  }
 
-    switch (key_pressed)
-    {
-    case 1:
-        m_enuGameMenuOption = GameMenuOption::StartNewGame;
-        break;  
+  switch (key_pressed)
+  {
+  case 1:
+      m_enuGameMenuOption = GameMenuOption::StartNewGame;
+      break;  
 
-    case 2:
-        m_enuGameMenuOption = GameMenuOption::CheckTopScores;
-        break;
+  case 2:
+      m_enuGameMenuOption = GameMenuOption::CheckTopScores;
+      break;
 
-    case 3:
-        m_enuGameMenuOption = GameMenuOption::QuitGame;
-        break;
+  case 3:
+      m_enuGameMenuOption = GameMenuOption::QuitGame;
+      break;
 
-    Default:
-        std::cout<<"Unexpected Value in GameMenuOption";
-        break;
-    }
+  Default:
+      std::cout<<"Unexpected Value in GameMenuOption";
+      break;
+  }
 
-    gameMainFunction();
+  gameMainFunction();
 }
 
 // GameManager Main Function
@@ -103,7 +116,6 @@ void GameManager::gameMainFunction()
   /* Input, Update, Render - the main game loop. */
   while (m_enuGameState != GameState::Quit) 
   {
-
     if (m_enuGameState == GameState::Run)
     {
       // Capture Current time - Start of Frame/Loop 
@@ -148,22 +160,24 @@ void GameManager::gameMainFunction()
     }
     else if(m_enuGameState == GameState::End)
     {
-      updateDataBase();
-      displayScore();
+      displayEndGameInfo();
       startGameMenu();
     }
   }
 }
 
-// Lunch New Game
+// Start New Game
 /*************************************************************************************/
 void GameManager::startNewGame()
 { 
-  std::string playerName;
+  // Take Player Name
   std::cout<<"Please Eneter Your Name\n\n";
-  std::cin>>playerName;
-  m_gameDataBaseObj.vidSetPlayerName(playerName);
+  std::cin>>m_strPlayerName;
+
+  // Update Game State to RUN
   m_enuGameState = GameState::Run;
+
+  // Check if The Game Needs a Reset 
   if (!(m_snakeObj->alive))
   {
     resetGame();
@@ -196,24 +210,40 @@ void GameManager::resetGame()
   m_renderObj.Reset();
 }
 
-// Display Player Score
+// Game Data Base Thread
 /*************************************************************************************/
-void GameManager::displayScore()
+void GameManager::threadUpdateDataBase()
 {
-  std::cout<<"     GAME OVER     \n";
-  puts("");
-  std::cout<<"##PLayer Name: "<<m_gameDataBaseObj.strGetPlayerName()<<" \n";
-  std::cout<<"##PLayer Score: "<<m_gameDataBaseObj.u64GetPlayerScore()<<" \n";
-  puts(""); 
+  while (m_enuGameState != GameState::Quit) 
+  {
+    /* Update Data Base */
+    updateDataBase();
+
+    /* Resonable Sleep for Maintaing Low CPU LOAD */
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
 }
 
 // Update Game Data Base
 /*************************************************************************************/
 void GameManager::updateDataBase()
 {
-  // Save Player Score
-  m_gameDataBaseObj.vidSetPlayerScore(m_gameObj.GetScore());
+  m_gameDataBaseObj.vidUpdateDataBase();
+}
 
-  // Update Game Top Score if needed
-  m_gameDataBaseObj.vidSavePlayer();
+// Display Player Score
+/*************************************************************************************/
+void GameManager::displayEndGameInfo()
+{
+  // Get Player Score
+  m_u64PlayerScore = m_gameObj.GetScore();
+
+  // Send Player Info to DataBase
+  m_gameDataBaseObj.vidSetPlayerInfo(m_strPlayerName, m_u64PlayerScore);
+
+  std::cout<<"     GAME OVER     \n";
+  puts("");
+  std::cout<<"##PLayer Name: "<<m_strPlayerName<<" \n";
+  std::cout<<"##PLayer Score: "<<m_u64PlayerScore<<" \n";
+  puts(""); 
 }

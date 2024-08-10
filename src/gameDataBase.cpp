@@ -5,23 +5,31 @@
 #include <vector>
 #include "gameDataBase.hpp"
 
-// Add a new score to the Map and save it to the file
+// GameDataBase Constructor
 /*************************************************************************************/
-void GameDataBase::vidSavePlayer() {
-    if (m_player.IsUpdated == true)
+GameDataBase::GameDataBase()
+    :   m_player{"", 0, false} {}
+
+// Update Game Data Base
+/*************************************************************************************/
+void GameDataBase::vidUpdateDataBase()
+{
+    std::lock_guard lock(m_mutex);
+    // Check if a Player New Data is Available
+    if (m_player.IsUpdated)
     {
-        m_mapScore[m_player.strName] = m_player.u64Score; // Add or update the score
-        SortAndTrimScores(); // Sort and keep only the top 10 scores
-        SaveScores(); // Save updated scores to the file
-        m_player.IsUpdated = false;
+        vidSavePlayer();
     }
-    else
-    {
-        /*
-        * Player is already saved
-        * No Action is required
-        */
-    }
+}
+
+// Set Player Name and Score
+/*************************************************************************************/
+void GameDataBase::vidSetPlayerInfo(std::string name, unsigned int score)
+{ 
+    std::lock_guard lock(m_mutex);
+    m_player.strName = name;  
+    m_player.u64Score = score; 
+    m_player.IsUpdated = true; 
 }
 
 // Load scores from the file
@@ -58,6 +66,38 @@ void GameDataBase::vidDisplayTopPlayers() const {
     }
 
     std::cout << "-------------------------\n";
+}
+
+// Add a new score to the Map and save it to the file
+/*************************************************************************************/
+void GameDataBase::vidSavePlayer() 
+{
+    std::lock_guard lock(m_mutex);  
+    m_mapScore[m_player.strName] = m_player.u64Score; // Add or update Player Score into the map
+    SortAndTrimScores(); // Sort and keep only the top 10 scores
+    SaveScores(); // Save updated scores to the file
+    m_player.IsUpdated = false;
+}
+
+// Sort scores and keep only the top 10
+/*************************************************************************************/
+void GameDataBase::SortAndTrimScores() {
+    // Convert map to vector of pairs for sorting
+    std::vector<std::pair<std::string, int>> sorted_scores(m_mapScore.begin(), m_mapScore.end());
+
+    // Sort by score in descending order
+    std::sort(sorted_scores.begin(), sorted_scores.end(),
+              [](const auto& a, const auto& b) {
+                  return a.second > b.second;
+              });
+
+    // Keep only the top 10 scores
+    m_mapScore.clear();
+    size_t count = 0;
+    for (const auto& entry : sorted_scores) {
+        if (count++ >= Max_NUMBER_PLAYERS) break;
+        m_mapScore[entry.first] = entry.second;
+    }
 }
 
 // Save scores to the file
@@ -111,47 +151,5 @@ void GameDataBase::SaveScores() const {
     }
 }
 
-// Sort scores and keep only the top 10
-/*************************************************************************************/
-void GameDataBase::SortAndTrimScores() {
-    // Convert map to vector of pairs for sorting
-    std::vector<std::pair<std::string, int>> sorted_scores(m_mapScore.begin(), m_mapScore.end());
 
-    // Sort by score in descending order
-    std::sort(sorted_scores.begin(), sorted_scores.end(),
-              [](const auto& a, const auto& b) {
-                  return a.second > b.second;
-              });
 
-    // Keep only the top 10 scores
-    m_mapScore.clear();
-    size_t count = 0;
-    for (const auto& entry : sorted_scores) {
-        if (count++ >= Max_NUMBER_PLAYERS) break;
-        m_mapScore[entry.first] = entry.second;
-    }
-}
-
-// Set Player Name
-/*************************************************************************************/
-void GameDataBase::vidSetPlayerName(std::string name)
-{ 
-    m_player.strName = name; 
-    m_player.IsUpdated = true; 
-}
-
-// Set Player Score
-/*************************************************************************************/
-void GameDataBase::vidSetPlayerScore(int score)
-{ 
-    m_player.u64Score = score; 
-    m_player.IsUpdated = true; 
-}
-
-// Get player Name
-/*************************************************************************************/
-std::string GameDataBase::strGetPlayerName(){ return m_player.strName; }
-
-// Get player Score
-/*************************************************************************************/
-unsigned int GameDataBase::u64GetPlayerScore(){ return m_player.u64Score; }
