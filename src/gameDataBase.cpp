@@ -14,6 +14,7 @@ GameDataBase::GameDataBase()
 /*************************************************************************************/
 void GameDataBase::vidUpdateDataBase()
 {
+    std::lock_guard lock(m_mutex);
     // Check if a Player New Data is Available
     if (m_player.IsUpdated)
     {
