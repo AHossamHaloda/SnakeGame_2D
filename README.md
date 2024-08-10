@@ -73,6 +73,8 @@ Max number of top scores is configurable through **Max_NUMBER_PLAYERS** in `game
 
 - **Configurable Game Settings**: All game settings are configured through preprocessor macros in configurable files `gameManagerCfg.h` and `gameDataBaseCfg.h` and assigned to `const` variables at compile/run time.
 
+- **Worker Thread for Game Data**: Introduced a worker thread to handle all operations related to the game database, improving performance and responsiveness.
+
 **New Features**
 
 - **Menu Options**: Added a menu that allows players to start a new game, view top players, or quit the game.
