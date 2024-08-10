@@ -2,6 +2,7 @@
 #define RENDERER_H
 
 #include <vector>
+#include <memory.h>
 #include "SDL.h"
 #include "snake.h"
 #include "gameState.hpp"
