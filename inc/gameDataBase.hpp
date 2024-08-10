@@ -5,27 +5,22 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <mutex>
 #include "gameDataBaseCfg.h"
 
 class GameDataBase {
 public:
-    GameDataBase()
-    :   m_player{"", 0, false} {}
-    
-    // Set Player Name
-    void vidSetPlayerName(std::string name);
+    // GameData Base Constructor
+    GameDataBase();
 
-    // Set Player Score
-    void vidSetPlayerScore(int score);
+    // GameData Base Destructor
+    ~GameDataBase(){}
 
-    // Get player Name
-    std::string strGetPlayerName();
+    // Update Data Base
+    void vidUpdateDataBase();
 
-    // Get player Score
-    unsigned int u64GetPlayerScore();
-
-    // Add a new score
-    void vidSavePlayer();
+    // Set Player Info
+    void vidSetPlayerInfo(std::string name, unsigned int score);
 
     // Load scores from the file
     void vidDisplayTopPlayers() const;
@@ -34,21 +29,32 @@ public:
     struct Player{
         std::string strName;
         unsigned int u64Score;
-        bool IsUpdated = true; 
+        bool IsUpdated; 
     };
 
-private:
-    const std::string m_strFilename{FILE_TOP_SCORES};
-    
-    std::map<std::string, int> m_mapScore;
 
-    Player m_player; 
+private:    // private methodes
+    // Add a new score
+    void vidSavePlayer();
     
     // Sort the map and limit it to max. number of players to be stored
     void SortAndTrimScores();
 
     // Save scores to the file
     void SaveScores() const;
+
+private:    // private members
+    // Member variable holds the path of the external file
+    const std::string m_strFilename{FILE_TOP_SCORES};
+
+    // Map to hold the players and their scores
+    std::map<std::string, int> m_mapScore;
+
+    // Player Struct to handle new players data
+    Player m_player; 
+
+    // Mutex variable used to protect Player Struct
+    mutable std::mutex m_mutex;
 
 };
 

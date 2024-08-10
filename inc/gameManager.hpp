@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
 
 #include "gameManagerCfg.h"
 #include "gameDataBase.hpp"
@@ -22,9 +23,7 @@ public:
 GameManager();
 
 // GameManager Destructor
-~GameManager(){
-    std::cout<<"GameManager Destructor\n";
-}
+~GameManager();
 
 // Enum Class Represent Game Menu Options 
 enum class GameMenuOption
@@ -52,10 +51,10 @@ void quitGame();
 
 void resetGame();
 
+/* Game Data Base Handling */
+void threadUpdateDataBase();
+void displayEndGameInfo();
 void vidDisplayTopScores();
-
-void displayScore();
-
 void updateDataBase();
 
 
@@ -68,9 +67,16 @@ Controller m_controllerObj;
 Game m_gameObj;
 Renderer m_renderObj;
 
+/* Thread for EndGame Handling */
+std::thread m_threadDataBase; 
+
 /* Game Status */
 GameState m_enuGameState;
 GameMenuOption m_enuGameMenuOption; // Represent Game Menu Options
+
+/* Player Info */
+std::string m_strPlayerName;
+unsigned int m_u64PlayerScore;
 
 /* Game Settings Parameters */
 static constexpr uint16_t m_u16FramesPerSecond{GAME_FPS};
