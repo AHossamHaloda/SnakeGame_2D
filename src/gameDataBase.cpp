@@ -3,6 +3,8 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <algorithm>
+#include <iomanip>
 #include "gameDataBase.hpp"
 
 // GameDataBase Constructor
