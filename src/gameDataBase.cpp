@@ -21,7 +21,6 @@ void GameDataBase::vidUpdateDataBase()
     // Check if a Player New Data is Available
     if (m_player.IsUpdated)
     {
-        std::cout<<"@@ save the fucken player\n";
         vidSavePlayer();
         m_player.IsUpdated = false;
     }

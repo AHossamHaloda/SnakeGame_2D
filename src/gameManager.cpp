@@ -15,7 +15,6 @@ GameManager::GameManager()
   m_gameObj(Game(m_snakeObj, m_u16GridWidth, m_u16GridHeight)),
   m_renderObj(Renderer(m_snakeObj, m_u16ScreenWidth, m_u16ScreenHeight, m_u16GridWidth, m_u16GridHeight)),
   m_enuGameState(GameState::Undefined),
-  m_enuGameMenuOption(GameMenuOption::Undefined),
   m_strPlayerName(""),
   m_u64PlayerScore(0)
 {
@@ -36,12 +35,12 @@ GameManager::~GameManager(){
 /*************************************************************************************/
 void GameManager::gameInit()
 {
+  /* Launch Data Base Thread */
+  m_threadDataBase = std::thread(&GameManager::threadUpdateDataBase, this);
+
   std::cout<<"~~~~~ Welcome to Snake_2D game ~~~~~\n";
   /* Start Game Menu */
   startGameMenu();
-
-  /* Launch Data Base Thread */
-  m_threadDataBase = std::thread(&GameManager::threadUpdateDataBase, this);
 }
 
 // Lunch Game Menu
@@ -69,23 +68,21 @@ void GameManager::startGameMenu()
   switch (key_pressed)
   {
   case 1:
-      m_enuGameMenuOption = GameMenuOption::StartNewGame;
+      startNewGame();
       break;  
 
   case 2:
-      m_enuGameMenuOption = GameMenuOption::CheckTopScores;
+      vidDisplayTopScores();
       break;
 
   case 3:
-      m_enuGameMenuOption = GameMenuOption::QuitGame;
+      quitGame();
       break;
 
   Default:
       std::cout<<"Unexpected Value in GameMenuOption";
       break;
   }
-
-  gameMainFunction();
 }
 
 // GameManager Main Function
@@ -98,20 +95,6 @@ void GameManager::gameMainFunction()
   Uint32 frame_duration;
   int frame_count = 0;
 
-  switch (m_enuGameMenuOption)
-  {
-    case GameMenuOption::StartNewGame:
-    startNewGame();
-    break;
-
-    case GameMenuOption::CheckTopScores:
-    vidDisplayTopScores();
-    break;
-
-    case GameMenuOption::QuitGame:
-    quitGame();
-    break;
-  }
 
   /* Input, Update, Render - the main game loop. */
   while (m_enuGameState != GameState::Quit) 
@@ -214,10 +197,26 @@ void GameManager::resetGame()
 /*************************************************************************************/
 void GameManager::threadUpdateDataBase()
 {
-  while (m_enuGameState != GameState::Quit) 
+  bool bGameOn = true;
+
+  while (bGameOn)
   {
-    /* Update Data Base */
-    updateDataBase();
+    if (m_enuGameState == GameState::Quit)
+    {
+      bGameOn = false;
+    }
+    else if ((m_enuGameState == GameState::Run) || (m_enuGameState == GameState::Pause) || (m_enuGameState == GameState::End))
+    {
+      /* Update Data Base */
+      updateDataBase();
+    }
+    else
+    {
+      /*
+      * This represent the Undefine state which is at the init phase.
+      * No action is required at this state.
+      */
+    }
 
     /* Resonable Sleep for Maintaing Low CPU LOAD */
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
