@@ -54,7 +54,11 @@ private:    // private members
     Player m_player; 
 
     // Mutex variable used to protect Player Struct
-    mutable std::mutex m_mutex;
+    mutable std::mutex m_playerMutex;
+    
+    // Mutex variable used to protect Player Struct
+    mutable std::mutex m_fileMutex;
+    
 
 };
 
