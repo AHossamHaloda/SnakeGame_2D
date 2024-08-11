@@ -4,9 +4,13 @@ This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree P
 
 <img src="images/snake_game.gif"/>
 
+
 --- 
 
 ## Game Overview
+
+<img src="images/snake-2D.gif"/>
+
 In this game, you control a snake navigating through a 2D grid by moving it up, down, left, and right using the arrow keys.
 
 **<u>Starting the Game</u>**
