@@ -16,11 +16,13 @@ GameDataBase::GameDataBase()
 /*************************************************************************************/
 void GameDataBase::vidUpdateDataBase()
 {
-    std::lock_guard lock(m_mutex);
+    std::lock_guard lock(m_playerMutex);
+
     // Check if a Player New Data is Available
     if (m_player.IsUpdated)
     {
         vidSavePlayer();
+        m_player.IsUpdated = false;
     }
 }
 
@@ -28,7 +30,8 @@ void GameDataBase::vidUpdateDataBase()
 /*************************************************************************************/
 void GameDataBase::vidSetPlayerInfo(std::string name, unsigned int score)
 { 
-    std::lock_guard lock(m_mutex);
+    std::lock_guard lock(m_playerMutex);
+    
     m_player.strName = name;  
     m_player.u64Score = score; 
     m_player.IsUpdated = true; 
@@ -36,7 +39,10 @@ void GameDataBase::vidSetPlayerInfo(std::string name, unsigned int score)
 
 // Load scores from the file
 /*************************************************************************************/
-void GameDataBase::vidDisplayTopPlayers() const {
+void GameDataBase::vidDisplayTopPlayers() const 
+{    
+    std::lock_guard lock(m_fileMutex);
+
     // Open the file to read the scores
     std::ifstream infile(m_strFilename);
     if (!infile.is_open()) {
@@ -74,16 +80,15 @@ void GameDataBase::vidDisplayTopPlayers() const {
 /*************************************************************************************/
 void GameDataBase::vidSavePlayer() 
 {
-    std::lock_guard lock(m_mutex);  
     m_mapScore[m_player.strName] = m_player.u64Score; // Add or update Player Score into the map
     SortAndTrimScores(); // Sort and keep only the top 10 scores
     SaveScores(); // Save updated scores to the file
-    m_player.IsUpdated = false;
 }
 
 // Sort scores and keep only the top 10
 /*************************************************************************************/
-void GameDataBase::SortAndTrimScores() {
+void GameDataBase::SortAndTrimScores() 
+{
     // Convert map to vector of pairs for sorting
     std::vector<std::pair<std::string, int>> sorted_scores(m_mapScore.begin(), m_mapScore.end());
 
@@ -96,35 +101,48 @@ void GameDataBase::SortAndTrimScores() {
     // Keep only the top 10 scores
     m_mapScore.clear();
     size_t count = 0;
-    for (const auto& entry : sorted_scores) {
-        if (count++ >= Max_NUMBER_PLAYERS) break;
+    for (const auto& entry : sorted_scores) 
+    {
+        if (count++ >= Max_NUMBER_PLAYERS) 
+        break;
+
         m_mapScore[entry.first] = entry.second;
     }
 }
 
 // Save scores to the file
 /*************************************************************************************/
-void GameDataBase::SaveScores() const {
+void GameDataBase::SaveScores() const 
+{    
+    std::lock_guard lock(m_fileMutex);
+
     // Open the existing file and read its contents into a map
     std::map<std::string, int> file_scores;
     std::ifstream infile(m_strFilename);
-    if (infile.is_open()) {
+    if (infile.is_open()) 
+    {
         std::string name;
         int score;
-        while (infile >> name >> score) {
+        while (infile >> name >> score) 
+        {
             file_scores[name] = score;
         }
         infile.close();
     }
 
     // Merge current map scores with file scores
-    for (const auto& entry : m_mapScore) {
-        if (file_scores.find(entry.first) != file_scores.end()) {
+    for (const auto& entry : m_mapScore) 
+    {
+        if (file_scores.find(entry.first) != file_scores.end()) 
+        {
             // If player is already in file, update only if the new score is higher
-            if (entry.second > file_scores[entry.first]) {
+            if (entry.second > file_scores[entry.first]) 
+            {
                 file_scores[entry.first] = entry.second;
             }
-        } else {
+        } 
+        else 
+        {
             // If player is not in file, add them
             file_scores[entry.first] = entry.second;
         }
@@ -141,14 +159,18 @@ void GameDataBase::SaveScores() const {
 
     // Write only the top 10 scores back to the file
     std::ofstream outfile(m_strFilename);
-    if (outfile.is_open()) {
+    if (outfile.is_open()) 
+    {
         size_t count = 0;
-        for (const auto& entry : all_scores) {
+        for (const auto& entry : all_scores) 
+        {
             if (count++ >= 10) break;
             outfile << entry.first << ' ' << entry.second << '\n';
         }
         outfile.close();
-    } else {
+    } 
+    else 
+    {
         std::cout << "Can't open file to store player score: " << m_strFilename << "\n";
     }
 }

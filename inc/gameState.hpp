@@ -3,11 +3,11 @@
 
 // Encum Class represent the game states
 enum class GameState {
-    Undefined = 0,
-    Run,
-    Pause,
-    End,
-    Quit,
+    Undefined = 0,  // Init State
+    Run,            // Game is Running
+    Pause,          // Game is Paused
+    End,            // Game is Ended
+    Quit,           // Game Exit
     GameStateCount
 };
 

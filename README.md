@@ -2,7 +2,7 @@
 
 This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
 
-<img src="../images/snake_game.gif"/>
+<img src="images/snake_game.gif"/>
 
 --- 
 
@@ -72,6 +72,8 @@ Max number of top scores is configurable through **Max_NUMBER_PLAYERS** in `game
 - **State Machine Integration**: Integrated a state machine in the Game Super Loop using two enums to represent the game menu options and the current game state.
 
 - **Configurable Game Settings**: All game settings are configured through preprocessor macros in configurable files `gameManagerCfg.h` and `gameDataBaseCfg.h` and assigned to `const` variables at compile/run time.
+
+- **Worker Thread for Game Data**: Introduced a worker thread to handle all operations related to the game database, improving performance and responsiveness.
 
 **New Features**
 
