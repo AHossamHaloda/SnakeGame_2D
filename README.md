@@ -115,17 +115,6 @@ The Project use **cmake** and **make** as build systems.
 Check the **GameManager Class** which has the main interfaces for the Game:
 - `void gameInit()` // Game Init
 - `void gameMainFunction()` // Game Main 
-- // Enum Class Represent Game Menu Options 
-```
-enum class GameMenuOption
-{
-    Undefined = 0,
-    StartNewGame,
-    CheckTopScores,
-    QuitGame,
-    MenuOptionCount
-}
-```
 
 Check the **GameDataBase Class** which has the main interfaces for handling Game Record:
 - `void vidUpdateDataBase()` // Update Game Data Base
@@ -138,17 +127,18 @@ struct Player
 {
       std::string strName;
       unsigned int u64Score;
-      bool IsUpdated = true; 
+      bool IsUpdated; 
 }
 ```
 Check **gameState.hpp** which has the enum class that represent the game states
 ```
+// Encum Class represent the game states
 enum class GameState {
-    Undefined = 0,
-    Run,
-    Pause,
-    End,
-    Quit,
+    Undefined = 0,  // Init State
+    Run,            // Game is Running
+    Pause,          // Game is Paused
+    End,            // Game is Ended
+    Quit,           // Game Exit
     GameStateCount
 }
 ```
@@ -156,7 +146,7 @@ Check **Snake Class**, **Game Class** and **Renderer Class** which has a new Int
 `void Reset()` 
 
 #### Point 2
-Check `void SaveScores() const` and `void vidDisplayTopPlayers() const` in the **GameData Base Class** which are used to save(write) socre in an external file and dispay (read) from it to the user.
+Check `void SaveScores() const` and `void vidDisplayTopPlayers() const` in the **GameData Base Class** which are used to save(write) socre in an external file and display (read) from it to the user.
 
 #### Point 3
 Check `void startGameMenu()` in **GameManager class** that enable the player to select from a menu options.
@@ -164,9 +154,10 @@ Check `void startGameMenu()` in **GameManager class** that enable the player to 
 #### Point 4
 Check **gameManager.hpp** file line 82 to line 87 which as constexpr member variables to hold game settings parameters.
 Check **gameDataBase.hpp** file line 48 which has const member variable to hold the path of the external file.
-Check **gameDataBase.cpp** file `vidDisplayTopPlayers()` line 45 which has a locl vector of pairs to store the readed data from the file.
-Check **gameDataBase.cpp** file `SaveScores()` line 131 which has a locl vector of pairs to store the content of the map for further processing (sorting).
-Check **gameDataBase.cpp** file `SortAndTrimScores()` line 85 which has a locl vector of pairs to store the content of the map for further processing (sorting/trimming).
+Check **gameDataBase.cpp** file `vidDisplayTopPlayers()` line 54 which has a local vector of pairs to store the readed data from the file.
+Check **gameDataBase.cpp** file `SortAndTrimScores()` line 93 which has a locl vector of pairs to store the content of the map for further processing (sorting/trimming).
+Check **gameDataBase.cpp** file `SaveScores()` line 152 which has a locl vector of pairs to store the content of the map for further processing (sorting).
+
 
 ================================================
 
@@ -175,6 +166,7 @@ Check **gameDataBase.cpp** file `SortAndTrimScores()` line 85 which has a locl v
 Check the new classes **GameManager class** and **GameDataBase class**.
 
 #### Point 2
+Check **gameManager.cpp** file line 12
 Check **gameDataBase.cpp** file line 11
 Check **snake.h** file line 13
 Check **controller.h** file line 13
@@ -219,13 +211,13 @@ Not Done.
 
 ### <u>Section 6:</u> Concurrency
 #### Point 1
-Check **gameManager.cpp** file line 30 and 44 where a thread is lanuched to handle Game Data Base Update.
+Check **gameManager.cpp** file line 27 and 39 where a thread is lanuched to handle Game Data Base Update.
 
 #### Point 2
 Not Done.
 
 #### Point 3
-Check **gameDataBase.cpp** file line 17, 29, and 75  which has protection on m_player member variable to protect it aganist race condition which can occur from the the main thread and the work thread concurrently. 
+Check **gameDataBase.cpp** file line 19, 33, 43 and 117  which represent protection using m_playerMutex and m_fileMutexhas on accessing the player struct and the external file to prevent race condition which can occur from the the main thread and the work thread concurrently. 
 
 #### Point 4
 Not Done.
